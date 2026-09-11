@@ -1,4 +1,6 @@
-"""Módulo de leitura e agregações dos dados de vistorias."""
+"""Módulo de leitura e agregações dos dados de vistorias (T-09/T-10)."""
+from pathlib import Path
+
 import pandas as pd
 
 
@@ -10,11 +12,22 @@ COLUNAS_ESPERADAS = [
 ]
 
 
-def carregar(caminho: str = "dados/vistorias_mentira.csv") -> pd.DataFrame:
+def _caminho_padrao() -> Path:
+    """Costura T-09/T-07: prefere o limpo real; cai para o mentira (GAIA_PROTOCOLO)."""
+    base = Path(__file__).resolve().parent.parent / "dados"
+    limpo = base / "vistorias_limpo.csv"
+    mentira = base / "vistorias_mentira.csv"
+    return limpo if limpo.exists() else mentira
+
+
+def carregar(caminho: str | Path | None = None) -> pd.DataFrame:
     """
-    Lê o CSV de vistorias e valida as 12 colunas do contrato.
-    Troque o caminho para 'dados/vistorias_limpo.csv' quando o Rodrigo entregar.
+    Lê o CSV de vistorias e valida as 12 colunas do contrato (DESIGN §2).
+    Sem argumento: usa dados/vistorias_limpo.csv se existir, senão o mentira.
+    Funciona chamado da raiz ou de dentro de src/ (DoD T-09).
     """
+    if caminho is None:
+        caminho = _caminho_padrao()
     df = pd.read_csv(caminho, parse_dates=["data"])
 
     faltando = [c for c in COLUNAS_ESPERADAS if c not in df.columns]
@@ -60,8 +73,9 @@ def conformidade_por_regiao(df: pd.DataFrame) -> pd.Series:
 
 
 if __name__ == "__main__":
-    # Teste rápido
+    # Teste rápido (T-09/T-10)
     df = carregar()
+    print(f"Arquivo: {_caminho_padrao()}")
     print(f"Linhas: {len(df)}")
     print(f"Colunas: {list(df.columns)}")
     print(f"Taxa conformidade geral: {taxa_conformidade(df)}%")
