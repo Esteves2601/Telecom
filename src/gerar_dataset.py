@@ -48,6 +48,11 @@ MULTA_FAIXA = {
 }
 PROB_MULTA = 0.60
 PROB_REGIAO_MINUSCULA = 0.02
+PROB_CAUSA_NULA = 0.015
+PROB_MULTA_NULA = 0.02
+PROB_EQUIPAMENTO_NULO = 0.02
+QTD_ABSURDOS = 4
+QTD_DUPLICATAS = 5
 
 DATA_INICIO = date(2025, 7, 1)
 DATA_FIM = date(2026, 6, 30)
@@ -114,6 +119,35 @@ def gerar_linha(rng, vistoria_id):
     }
 
 
+def plantar_sujeira(rng, rows):
+    for r in rows:
+        if r["conforme"] == "False" and rng.random() < PROB_CAUSA_NULA:
+            r["causa"] = ""
+        if (
+            r["conforme"] == "False"
+            and r["multa_valor"] != ""
+            and float(r["multa_valor"]) > 0
+            and rng.random() < PROB_MULTA_NULA
+        ):
+            r["multa_valor"] = ""
+        if rng.random() < PROB_EQUIPAMENTO_NULO:
+            r["equipamento"] = ""
+
+    absurdos = rng.sample(range(len(rows)), QTD_ABSURDOS)
+    for i, idx in enumerate(absurdos):
+        r = rows[idx]
+        if i < 2:
+            r["tempo_minutos"] = rng.randint(-60, -5)
+        else:
+            r["checklist_score"] = f"{rng.uniform(1.05, 1.20):.2f}"
+
+    for id_duplicar in rng.sample([r["vistoria_id"] for r in rows], QTD_DUPLICATAS):
+        for r in rows:
+            if r["vistoria_id"] == id_duplicar:
+                rows.append(r.copy())
+                break
+
+
 def main():
     parser = argparse.ArgumentParser(description="Gerador do dataset de vistorias")
     parser.add_argument("--seed", type=int, default=None)
@@ -123,15 +157,17 @@ def main():
     rng = random.Random(args.seed)
     n_linhas = args.linhas if args.linhas else rng.randint(800, 1100)
 
+    rows = [gerar_linha(rng, 1000 + i) for i in range(1, n_linhas + 1)]
+    plantar_sujeira(rng, rows)
+
     caminho = "dados/vistorias.csv"
     with open(caminho, "w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=COLUNAS)
         writer.writeheader()
-        for i in range(1, n_linhas + 1):
-            writer.writerow(gerar_linha(rng, 1000 + i))
+        writer.writerows(rows)
 
     print(f"Salvo em {caminho}")
-    print(f"Linhas: {n_linhas}")
+    print(f"Linhas: {len(rows)}")
     print(f"Colunas: {len(COLUNAS)}")
 
 

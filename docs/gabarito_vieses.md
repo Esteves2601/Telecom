@@ -16,6 +16,11 @@
 ## Sujeira plantada (para a Sprint 2)
 
 - `PROB_REGIAO_MINUSCULA = 0.02` → ~2% das regiões em minúsculo (`sul` em vez de `Sul`), para treinar padronização na limpeza.
+- `PROB_CAUSA_NULA = 0.015` → ~1,5% dos não-conformes sem `causa` (nulo a ser decidido na limpeza).
+- `PROB_MULTA_NULA = 0.02` → ~2% das multas não-conformes sem valor (`multa_valor` nulo).
+- `PROB_EQUIPAMENTO_NULO = 0.02` → ~2% sem `equipamento`.
+- `QTD_ABSURDOS = 4` → 2 linhas com `tempo_minutos` negativo e 2 com `checklist_score` > 1.
+- `QTD_DUPLICATAS = 5` → 5 linhas duplicadas por `vistoria_id`.
 
 ## Obervação de reprodutibilidade
 
