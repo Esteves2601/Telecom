@@ -4,11 +4,13 @@ from pathlib import Path
 import pandas as pd
 
 
-# Contrato de schema — DESIGN.md §2 (não mudar sem DEC + aviso, ver GAIA_PROTOCOLO)
+# Contrato de schema — docs/DESIGN.md §2 + docs/dicionario_de_dados.md (T-02/T-05, Rodrigo).
+# Decisão vigente: `supervisor`→`equipamento`, `tempo_exec_min`→`tempo_minutos`.
+# Não mudar sem DEC + aviso (GAIA_PROTOCOLO).
 COLUNAS_ESPERADAS = [
-    "vistoria_id", "data", "tipo", "regiao", "tecnico", "supervisor",
-    "checklist_score", "conforme", "causa", "multa_valor",
-    "reincidencia", "tempo_exec_min",
+    "vistoria_id", "data", "tecnico", "regiao", "tipo",
+    "conforme", "causa", "multa_valor", "checklist_score",
+    "tempo_minutos", "reincidencia", "equipamento",
 ]
 
 
@@ -45,7 +47,7 @@ def carregar(caminho: str | Path | None = None) -> pd.DataFrame:
         )
     df["multa_valor"] = pd.to_numeric(df["multa_valor"], errors="coerce").fillna(0)
     df["checklist_score"] = pd.to_numeric(df["checklist_score"], errors="coerce")
-    df["tempo_exec_min"] = pd.to_numeric(df["tempo_exec_min"], errors="coerce")
+    df["tempo_minutos"] = pd.to_numeric(df["tempo_minutos"], errors="coerce")
     df["vistoria_id"] = pd.to_numeric(df["vistoria_id"], errors="coerce")
 
     # Invariante 5: conforme => sem causa e sem multa (só avisa, não quebra)

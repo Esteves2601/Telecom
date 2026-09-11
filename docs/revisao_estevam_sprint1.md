@@ -33,9 +33,9 @@ python -c "import pandas; print('ok!')"
 - [ ] Seção `## Problema e Perguntas` existe?
 
 ### T-02 — Modelo de dados / schema (Rodrigo) — CONTRATO CRÍTICO
-- [ ] 12 colunas com nomes EXATOS: `vistoria_id,data,tipo,regiao,tecnico,supervisor,checklist_score,conforme,causa,multa_valor,reincidencia,tempo_exec_min`?
-- [ ] Tipos e categorias batem com DESIGN §2 + §3? (`tipo`: instalacao/reparo/auditoria)
-- [ ] **Assinatura Estevam:** vou programar contra essas 12 colunas, sem inventar coluna (GAIA_PROTOCOLO)
+- [x] 12 colunas com nomes EXATOS (decisão vigente T-02, merge PR #1): `vistoria_id,data,tecnico,regiao,tipo,conforme,causa,multa_valor,checklist_score,tempo_minutos,reincidencia,equipamento`
+- [x] Tipos e categorias batem com `docs/DESIGN.md §2` + `docs/dicionario_de_dados.md`? (`tipo`: instalacao/reparo/auditoria; `equipamento`: ONU/ROTEADOR/CABO)
+- [x] **Assinatura Estevam:** programo contra essas 12 colunas, sem inventar coluna (GAIA_PROTOCOLO). `dados.py` alinhado.
 
 ### T-03 — Gerador do dataset (Rodrigo)
 - [ ] `python src/gerar_dataset.py` cria `dados/vistorias.csv` com 600-1500 linhas?
